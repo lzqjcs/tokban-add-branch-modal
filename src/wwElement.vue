@@ -472,8 +472,9 @@ export default {
   backdrop-filter: blur(var(--backdrop-blur));
   display: flex; align-items: center; justify-content: center;
   padding: 16px; z-index: 9999;
-  opacity: 0; transition: opacity 0.2s ease; pointer-events: none;
-}
+  align-items: center;
+  overflow-y: auto;
+}}
 .tokban-branch-backdrop.active { opacity: 1; pointer-events: auto; }
 
 /* ── Animations ── */
@@ -493,7 +494,9 @@ export default {
   box-shadow: 0 25px 50px -12px rgba(0,0,0,0.2);
   width: 100%;
   animation: tokban-branch-in 0.2s ease-out forwards;
-  overflow: hidden;
+  display: flex;              /* ADD */
+  flex-direction: column;     /* ADD */
+  max-height: calc(100dvh - 32px);  /* ADD — 32px = 16px padding × 2 */
 }
 .tokban-branch-panel.closing { animation: tokban-branch-out 0.15s ease-in forwards; }
 
@@ -525,7 +528,13 @@ export default {
 
 /* ── Body ── */
 .tokban-branch-body {
-  padding: 20px 24px; display: flex; flex-direction: column; gap: 16px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;       /* ADD — body scrolls, header/footer stay fixed */
+  flex: 1;                /* ADD */
+  min-height: 0;          /* ADD — critical for flex scroll to work */
 }
 
 /* ── Fields ── */
