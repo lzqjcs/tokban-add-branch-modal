@@ -92,15 +92,16 @@
               <div class="tokban-branch-phone-prefix">
                 {{ content?.phonePrefix || '+62' }}
               </div>
-              <input
-                type="tel"
-                class="tokban-branch-phone-input"
-                :placeholder="content?.phonePlaceholder || '8xxxxxxxxxx'"
-                :value="phone"
-                :disabled="isLoading"
-                @input="handlePhoneInput"
-                @blur="validatePhone"
-              />
+            <input
+              type="tel"
+              class="tokban-branch-phone-input"
+              :placeholder="content?.phonePlaceholder || '8xxxxxxxxxx'"
+              :value="phone"
+              :disabled="isLoading"
+              maxlength="11"
+              @input="handlePhoneInput"
+              @blur="validatePhone"
+            />
             </div>
             <p v-if="phoneError" class="tokban-branch-error-text">{{ phoneError }}</p>
           </div>
@@ -298,7 +299,10 @@ export default {
     };
 
     const handlePhoneInput = (e) => {
-      const val = e?.target?.value ?? '';
+      const raw = e?.target?.value ?? '';
+      const val = raw.replace(/\D/g, '').slice(0, 11);
+      // Reflect cleaned value back to the input element
+      if (e?.target) e.target.value = val;
       setPhone(val);
       if (phoneError.value) validatePhone();
       recomputeFormValid();
