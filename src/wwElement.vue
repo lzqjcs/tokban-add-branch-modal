@@ -179,7 +179,6 @@ export default {
   emits: ['trigger-event'],
   setup(props, { emit }) {
 
-    // ── Internal Variables ──
     const { value: isOpen, setValue: setIsOpen } =
       wwLib.wwVariable.useComponentVariable({ uid: props.uid, name: 'isOpen', type: 'boolean', defaultValue: false });
 
@@ -198,40 +197,37 @@ export default {
     const { value: formValid, setValue: setFormValid } =
       wwLib.wwVariable.useComponentVariable({ uid: props.uid, name: 'formValid', type: 'boolean', defaultValue: false });
 
-    // ── Animation State ──
     const showModal      = ref(false);
     const backdropActive = ref(false);
     const isClosing      = ref(false);
     const branchNameRef  = ref(null);
 
-    // ── Validation errors ──
     const branchNameError = ref('');
     const contactError    = ref('');
     const phoneError      = ref('');
 
-    // ── CSS Variables ──
     const rootCssVars = computed(() => ({
-      '--backdrop-color':      props.content?.backdropColor        || 'rgba(0,0,0,0.4)',
-      '--backdrop-blur':       props.content?.backdropBlur         || '2px',
-      '--panel-radius':        props.content?.borderRadius         || '12px',
-      '--panel-bg':            props.content?.panelBackground      || '#ffffff',
-      '--divider-color':       props.content?.dividerColor         || '#e5e7eb',
-      '--footer-bg':           props.content?.footerBackground     || 'transparent',
-      '--btn-radius':          props.content?.buttonRadius         || '8px',
-      '--cancel-color':        props.content?.cancelBtnColor       || '#4b5563',
-      '--input-radius':        props.content?.inputRadius          || '8px',
-      '--input-border':        props.content?.inputBorderColor     || '#d1d5db',
-      '--input-focus':         props.content?.inputFocusColor      || '#f97316',
-      '--required-color':      props.content?.requiredColor        || '#ef4444',
-      '--label-color':         props.content?.labelColor           || '#111827',
-      '--hint-color':          props.content?.hintColor            || '#9ca3af',
-      '--banner-bg':           props.content?.bannerBackground     || '#fffbeb',
-      '--banner-border':       props.content?.bannerBorderColor    || '#fde68a',
-      '--banner-title-color':  props.content?.bannerTitleColor     || '#92400e',
-      '--banner-text-color':   props.content?.bannerTextColor      || '#b45309',
-      '--banner-icon-color':   props.content?.bannerIconColor      || '#f59e0b',
+      '--backdrop-color':      props.content?.backdropColor         || 'rgba(0,0,0,0.4)',
+      '--backdrop-blur':       props.content?.backdropBlur          || '2px',
+      '--panel-radius':        props.content?.borderRadius          || '12px',
+      '--panel-bg':            props.content?.panelBackground       || '#ffffff',
+      '--divider-color':       props.content?.dividerColor          || '#e5e7eb',
+      '--footer-bg':           props.content?.footerBackground      || 'transparent',
+      '--btn-radius':          props.content?.buttonRadius          || '8px',
+      '--cancel-color':        props.content?.cancelBtnColor        || '#4b5563',
+      '--input-radius':        props.content?.inputRadius           || '8px',
+      '--input-border':        props.content?.inputBorderColor      || '#d1d5db',
+      '--input-focus':         props.content?.inputFocusColor       || '#f97316',
+      '--required-color':      props.content?.requiredColor         || '#ef4444',
+      '--label-color':         props.content?.labelColor            || '#111827',
+      '--hint-color':          props.content?.hintColor             || '#9ca3af',
+      '--banner-bg':           props.content?.bannerBackground      || '#fffbeb',
+      '--banner-border':       props.content?.bannerBorderColor     || '#fde68a',
+      '--banner-title-color':  props.content?.bannerTitleColor      || '#92400e',
+      '--banner-text-color':   props.content?.bannerTextColor       || '#b45309',
+      '--banner-icon-color':   props.content?.bannerIconColor       || '#f59e0b',
       '--prefix-bg':           props.content?.phonePrefixBackground || '#f9fafb',
-      '--prefix-color':        props.content?.phonePrefixColor     || '#374151',
+      '--prefix-color':        props.content?.phonePrefixColor      || '#374151',
     }));
 
     const panelStyle = computed(() => ({
@@ -240,12 +236,9 @@ export default {
 
     const confirmBtnStyle = computed(() => {
       const colorKey = props.content?.confirmColor || 'orange';
-      return {
-        backgroundColor: BTN_COLOR_MAP[colorKey] ?? colorKey,
-      };
+      return { backgroundColor: BTN_COLOR_MAP[colorKey] ?? colorKey };
     });
 
-    // ── Hint with interpolation ──
     const resolvedBranchNameHint = computed(() => {
       const hint   = props.content?.branchNameHint || '';
       const entity = props.content?.entityName     || '';
@@ -253,7 +246,6 @@ export default {
       return hint.replace('{entityName}', entity).replace('{branchName}', branch);
     });
 
-    // ── Validation ──
     const validateBranchName = () => {
       if (!(branchName.value || '').trim()) {
         branchNameError.value = props.content?.branchNameRequired || 'Branch name is required';
@@ -289,7 +281,6 @@ export default {
       );
     };
 
-    // ── Input Handlers ──
     const handleBranchNameInput = (e) => {
       const val = e?.target?.value ?? '';
       setBranchName(val);
@@ -314,7 +305,6 @@ export default {
       emit('trigger-event', { name: 'phone-change', event: { value: val } });
     };
 
-    // ── Open / Close ──
     const resetForm = () => {
       setBranchName('');
       setContactPerson('');
@@ -363,7 +353,6 @@ export default {
 
     watch(() => props.content?.loading, (newVal) => setIsLoading(!!newVal));
 
-    // ── Event Handlers ──
     const handleBackdropClick = () => {
       if (isLoading.value) return;
       if (props.content?.closeOnBackdropClick !== false) closeModal('backdrop');
@@ -387,7 +376,6 @@ export default {
       const p = validatePhone();
       if (!b || !c || !p) return;
       if (isLoading.value) return;
-
       emit('trigger-event', {
         name: 'confirm',
         event: {
@@ -397,7 +385,6 @@ export default {
           phoneRaw:      phone.value,
         },
       });
-
       if (props.content?.autoLoading !== false) {
         setIsLoading(true);
       } else {
@@ -405,7 +392,6 @@ export default {
       }
     };
 
-    // ── Keyboard ──
     const handleKeydown = (e) => {
       if (!showModal.value || isLoading.value) return;
       if (e?.key === 'Escape' && props.content?.closeOnEscape !== false) {
@@ -467,15 +453,24 @@ export default {
 
 /* ── Backdrop ── */
 .tokban-branch-backdrop {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
   background: var(--backdrop-color);
   backdrop-filter: blur(var(--backdrop-blur));
-  display: flex; align-items: center; justify-content: center;
-  padding: 16px; z-index: 9999;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
   overflow-y: auto;
-}}
-.tokban-branch-backdrop.active { opacity: 1; pointer-events: auto; }
+}
+.tokban-branch-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
 
 /* ── Animations ── */
 @keyframes tokban-branch-in {
@@ -494,9 +489,9 @@ export default {
   box-shadow: 0 25px 50px -12px rgba(0,0,0,0.2);
   width: 100%;
   animation: tokban-branch-in 0.2s ease-out forwards;
-  display: flex;              /* ADD */
-  flex-direction: column;     /* ADD */
-  max-height: calc(100dvh - 32px);  /* ADD — 32px = 16px padding × 2 */
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 32px);
 }
 .tokban-branch-panel.closing { animation: tokban-branch-out 0.15s ease-in forwards; }
 
@@ -504,6 +499,7 @@ export default {
 .tokban-branch-header {
   display: flex; align-items: flex-start; justify-content: space-between;
   padding: 24px 24px 16px; gap: 12px;
+  flex-shrink: 0;
 }
 .tokban-branch-header-text { flex: 1; min-width: 0; }
 .tokban-branch-title {
@@ -524,7 +520,7 @@ export default {
 .tokban-branch-close-btn:hover:not(:disabled) { color: #374151; background: #f3f4f6; }
 .tokban-branch-close-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.tokban-branch-divider { height: 1px; background: var(--divider-color); }
+.tokban-branch-divider { height: 1px; background: var(--divider-color); flex-shrink: 0; }
 
 /* ── Body ── */
 .tokban-branch-body {
@@ -532,9 +528,9 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  overflow-y: auto;       /* ADD — body scrolls, header/footer stay fixed */
-  flex: 1;                /* ADD */
-  min-height: 0;          /* ADD — critical for flex scroll to work */
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 /* ── Fields ── */
@@ -615,6 +611,8 @@ export default {
 .tokban-branch-footer {
   display: flex; align-items: center; justify-content: flex-end;
   gap: 12px; padding: 16px 24px; background: var(--footer-bg);
+  flex-shrink: 0;
+  border-top: 1px solid var(--divider-color);
 }
 
 .tokban-branch-cancel-btn {
